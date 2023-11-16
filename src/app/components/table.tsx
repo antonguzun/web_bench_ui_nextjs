@@ -1,14 +1,12 @@
 import { ReportScheme } from "../entities.ts/report";
 
 
-export default async function ReportTable({ data }: { data: ReportScheme }) {
-    const picked_test = 'get user';
+export default async function ReportTable({ data, pickedTestName }: { data: ReportScheme, pickedTestName: string }) {
     return (
         <div className="relative flex place-items-center">
             <table className="table-auto">
                 <thead>
                     <tr>
-                        <th>Test Name</th>
                         <th>Webserver Name</th>
                         <th>Language</th>
                         <th>Database</th>
@@ -21,9 +19,8 @@ export default async function ReportTable({ data }: { data: ReportScheme }) {
                     </tr>
                 </thead>
                 <tbody>
-                    {data.results.filter((result, _) => result.test_name === picked_test).map((result, index) => (
+                    {data.results.filter((result, _) => result.test_name === pickedTestName).map((result, index) => (
                         <tr key={index}>
-                            <td>{result.test_name}</td>
                             <td>{result.webserver_name}</td>
                             <td>{result.language}</td>
                             <td>{result.database || '-'}</td>
