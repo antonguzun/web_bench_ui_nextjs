@@ -3,7 +3,9 @@ import { ReportScheme } from "../entities.ts/report";
 
 
 export default async function fetchReports() {
-    const res = await axios.get('https://app.guzun.dev/web_benchmark/reports/latest');
-    const data: ReportScheme = res.data;
-    return { data };
+    return axios.get('https://app.guzun.dev/web_benchmark/reports/latest')
+        .then((response) => {
+            console.log('2. server response:' + response.data);
+            return response.data
+        });
 }
