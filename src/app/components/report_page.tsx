@@ -1,11 +1,12 @@
 "use client";
 
-import React from "react";
+import React, { PureComponent } from 'react';
 import ReportTable from "./table";
 import ScenarioSet from "./scenario_picker";
 import { ReportScheme, InputResult } from "../entities/report";
 import { OrmOption } from "../entities/filter";
 import useSWRImmutable from "swr/immutable";
+import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 // @ts-ignore
 const fetcher = (...args) => fetch(...args).then((res) => res.json());
@@ -16,7 +17,7 @@ function useInput() {
   const [value, setValue] = React.useState("");
   const input = (
     <input
-      className="rounded pb-1 bg-slate-700"
+      className="rounded-md pb-1 bg-slate-700"
       value={value}
       onChange={(e) => setValue(e.target.value)}
       type="text"
@@ -30,7 +31,7 @@ function useOrmFilter() {
   const input = (
     <select
       id="orm"
-      className="rounded pb-1 bg-slate-700"
+      className="rounded-md pb-1 bg-slate-700"
       onChange={(e) => setValue(e.target.value as OrmOption)}
     >
       <option key={OrmOption.All} value={OrmOption.All}>
@@ -46,6 +47,7 @@ function useOrmFilter() {
   );
   return [value, input];
 }
+
 export default function ReportPage() {
   const { data, error } = useSWRImmutable<InputResult, string>(
     LATEST_REPORT_URL,
@@ -71,38 +73,92 @@ export default function ReportPage() {
     console.error("parsedData.results is empty or undefined");
   }
 
+  const filteredReports = parsedData.results
+    .filter((result, _) => result.testName === testName)
+    .filter((result, _) =>
+      webserverName !== ""
+        ? result.webserverName.includes(webserverName)
+        : true,
+    )
+    .filter((result, _) =>
+      language !== "" ? result.language.includes(language) : true,
+    )
+    .filter((result, _) =>
+      database !== ""
+        ? result.database && result.database.includes(database)
+        : true,
+    )
+    .filter((result) => {
+      if (orm === OrmOption.UseOrm) {
+        return result.orm != null;
+      } else if (orm === OrmOption.WithoutOrm) {
+        return result.orm === null;
+      }
+      return true;
+    })
+    .sort((a, b) => b.requestsPerSecond - a.requestsPerSecond);
+
   return (
-    <div className="flex min-h-screen flex-col items-center">
-      <div className="grid grid-cols-1 gap-2">
-        <label>
-          webserver name: <br />
-          {webserverNameInput}
-        </label>
-        <label>
-          language: <br />
-          {languageInput}
-        </label>
-        <label>
-          database: <br />
-          {databaseInput}
-        </label>
-        <label>
-          orm: <br />
-          {ormFilter}
-        </label>
+    <>
+      <h1 className="py-8 text-2xl text-center">Webservers bench</h1>
+
+      <div className="max-w-8xl mx-auto px-4 sm:px-6 md:px-8">
+
+        <div className="grid grid-rows-2 grid-flow-col gap-4 pl-8">
+          <ul className="row-span-3 auto-cols-min max-w-xs bg-slate-800 rounded-lg px-4 py-2">
+            <li>
+              <ScenarioSet
+                uniqueTestNames={uniqueTestNames}
+                setTestName={setTestName}
+              />
+            </li>
+
+            <li>
+              <label>
+                webserver name: <br />
+                {webserverNameInput}
+              </label>
+            </li>
+            <li>
+              <label>
+                language: <br />
+                {languageInput}
+              </label>
+            </li>
+            <li>
+              <label>
+                database: <br />
+                {databaseInput}
+              </label>
+            </li>
+            <li>
+
+              <label>
+                orm: <br />
+                {ormFilter}
+              </label>
+            </li>
+          </ul>
+
+          <div className="w-auto col-span-2">
+            <ReportTable
+              data={filteredReports}
+            />
+          </div>
+
+          <div className="row-span-2 col-span-2 px-4 py-8 sm:px-8 bg-slate-800 rounded-lg">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart width={150} height={40} data={filteredReports}>
+                <XAxis dataKey="webserverName" tick={{ fill: 'white' }} />
+                <YAxis tick={{ fill: 'white' }}/>
+                <Bar dataKey="requestsPerSecond" fill="#475569" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+
+        </div>
+
       </div>
-      <ScenarioSet
-        uniqueTestNames={uniqueTestNames}
-        setTestName={setTestName}
-      />
-      <ReportTable
-        data={parsedData}
-        testName={testName}
-        webserverName={webserverName}
-        database={database}
-        language={language}
-        orm={orm}
-      />
-    </div>
+    </>
   );
 }
