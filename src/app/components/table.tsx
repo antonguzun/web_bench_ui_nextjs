@@ -1,7 +1,14 @@
+"use client"
+
 import { ReportScheme } from "../entities.ts/report";
 
 
-export default async function ReportTable({ data, pickedTestName }: { data: ReportScheme, pickedTestName: string }) {
+export default async function ReportTable({ data, testName,
+    webserverName, database, language, orm }:
+    {
+        data: ReportScheme, testName: string,
+        webserverName: string, database: string, language: string, orm: boolean
+    }) {
     return (
         <div className="relative flex place-items-center">
             <table className="table-auto">
@@ -19,19 +26,24 @@ export default async function ReportTable({ data, pickedTestName }: { data: Repo
                     </tr>
                 </thead>
                 <tbody>
-                    {data.results.filter((result, _) => result.test_name === pickedTestName).map((result, index) => (
-                        <tr key={index}>
-                            <td>{result.webserver_name}</td>
-                            <td>{result.language}</td>
-                            <td>{result.database || '-'}</td>
-                            <td>{result.orm || '-'}</td>
-                            <td>{result.requests_per_second}</td>
-                            <td>{result.latency_p50}</td>
-                            <td>{result.latency_p75}</td>
-                            <td>{result.latency_p90}</td>
-                            <td>{result.latency_p99}</td>
-                        </tr>
-                    ))}
+                    {data.results
+                        .filter((result, _) => result.testName === testName)
+                        .filter((result, _) => webserverName !== "" ? result.webserverName.includes(webserverName) : true)
+                        .filter((result, _) => language !== "" ? result.language.includes(language) : true)
+                        .sort((a, b) => b.requestsPerSecond - a.requestsPerSecond)
+                        .map((result, index) => (
+                            <tr key={index}>
+                                <td>{result.webserverName}</td>
+                                <td>{result.language}</td>
+                                <td>{result.database || '-'}</td>
+                                <td className="text-center">{result.orm || '-'}</td>
+                                <td className="text-right">{result.requestsPerSecond}</td>
+                                <td className="text-right">{result.latencyP50__ms.toFixed(2)}</td>
+                                <td className="text-right">{result.latencyP75__ms.toFixed(2)}</td>
+                                <td className="text-right">{result.latencyP90__ms.toFixed(2)}</td>
+                                <td className="text-right">{result.latencyP99__ms.toFixed(2)}</td>
+                            </tr>
+                        ))}
                 </tbody>
             </table>
         </div>
