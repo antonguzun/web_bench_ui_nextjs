@@ -20,14 +20,14 @@ export default function ReportTable({
 }) {
   return (
     <div className="relative flex place-items-center">
-      <table className="table-auto">
+      <table className="border-collapse border border-slate-500">
         <thead>
           <tr>
-            <th>Webserver Name</th>
+            <th>Webserver</th>
             <th>Language</th>
             <th>Database</th>
             <th>ORM</th>
-            <th>Requests per Second</th>
+            <th>RPS</th>
             <th>Latency p50</th>
             <th>Latency p75</th>
             <th>Latency p90</th>
@@ -61,25 +61,27 @@ export default function ReportTable({
             .sort((a, b) => b.requestsPerSecond - a.requestsPerSecond)
             .map((result, index) => (
               <tr key={index}>
-                <td>{result.webserverName}</td>
-                <td>{result.language}</td>
-                <td>{result.database || "-"}</td>
-                <td className="tabular-nums text-center">
+                <td className="border border-slate-500 bg-gray-900 text-center">
+                  {result.webserverName}
+                </td>
+                <td className="border border-slate-500 bg-gray-900 text-center">{result.language}</td>
+                <td className="border border-slate-500 bg-gray-900 text-center">{result.database || "-"}</td>
+                <td className="border border-slate-500 bg-gray-900 text-center">
                   {result.orm || "-"}
                 </td>
-                <td className="tabular-nums text-right">
+                <td className="border border-slate-500 bg-gray-900 tabular-nums text-right">
                   {result.requestsPerSecond.toFixed(0)}
                 </td>
-                <td className="tabular-nums text-right">
+                <td className="border border-slate-500 bg-gray-900 tabular-nums text-right">
                   {result.latencyP50__ms.toFixed(2)}
                 </td>
-                <td className="tabular-nums text-right">
+                <td className="border border-slate-500 bg-gray-900 tabular-nums text-right">
                   {result.latencyP75__ms.toFixed(2)}
                 </td>
-                <td className="tabular-nums text-right">
+                <td className="border border-slate-500 bg-gray-900 tabular-nums text-right">
                   {result.latencyP90__ms.toFixed(2)}
                 </td>
-                <td className="tabular-nums text-right">
+                <td className="border border-slate-500 bg-gray-900 tabular-nums text-right">
                   {result.latencyP99__ms.toFixed(2)}
                 </td>
               </tr>

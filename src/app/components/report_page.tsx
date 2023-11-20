@@ -2,7 +2,7 @@
 
 import React from "react";
 import ReportTable from "./table";
-import TestNamesSet from "./scenario_picker";
+import ScenarioSet from "./scenario_picker";
 import { ReportScheme, InputResult } from "../entities/report";
 import { OrmOption } from "../entities/filter";
 import useSWRImmutable from "swr/immutable";
@@ -16,7 +16,7 @@ function useInput() {
   const [value, setValue] = React.useState("");
   const input = (
     <input
-      className="pb-1 bg-gray-700"
+      className="rounded pb-1 bg-slate-700"
       value={value}
       onChange={(e) => setValue(e.target.value)}
       type="text"
@@ -30,12 +30,18 @@ function useOrmFilter() {
   const input = (
     <select
       id="orm"
-      className="pb-1 bg-gray-700"
+      className="rounded pb-1 bg-slate-700"
       onChange={(e) => setValue(e.target.value as OrmOption)}
     >
-      <option value={OrmOption.All}>All</option>
-      <option value={OrmOption.UseOrm}>ORM</option>
-      <option value={OrmOption.WithoutOrm}>No ORM</option>
+      <option key={OrmOption.All} value={OrmOption.All}>
+        All
+      </option>
+      <option key={OrmOption.UseOrm} value={OrmOption.UseOrm}>
+        ORM
+      </option>
+      <option key={OrmOption.WithoutOrm} value={OrmOption.WithoutOrm}>
+        No ORM
+      </option>
     </select>
   );
   return [value, input];
@@ -61,19 +67,31 @@ export default function ReportPage() {
   const uniqueTestNames = new Set<string>(testNames);
   if (testName === "" && parsedData.results.length > 0) {
     setTestName(parsedData.results[0].testName);
+  } else {
+    console.error("parsedData.results is empty or undefined");
   }
 
   return (
     <div className="flex min-h-screen flex-col items-center">
-      webserver name:
-      {webserverNameInput} <br />
-      language:
-      {languageInput} <br />
-      database:
-      {databaseInput} <br />
-      orm:
-      {ormFilter} <br />
-      <TestNamesSet
+      <div className="grid grid-cols-1 gap-2">
+        <label>
+          webserver name: <br />
+          {webserverNameInput}
+        </label>
+        <label>
+          language: <br />
+          {languageInput}
+        </label>
+        <label>
+          database: <br />
+          {databaseInput}
+        </label>
+        <label>
+          orm: <br />
+          {ormFilter}
+        </label>
+      </div>
+      <ScenarioSet
         uniqueTestNames={uniqueTestNames}
         setTestName={setTestName}
       />
