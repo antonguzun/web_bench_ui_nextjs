@@ -1,54 +1,59 @@
 "use client"
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Suspense } from 'react';
 import ReportTable from './components/table';
 import TestNamesSet from './components/test_picker';
-import { ReportScheme } from "./entities.ts/report";
+import { ReportScheme, InputResult } from "./entities.ts/report";
 import useSWRImmutable from 'swr/immutable';
 
 
 const fetcher = (...args) => fetch(...args).then((res) => res.json())
 
+const LATEST_REPORT_URL = 'https://app.guzun.dev/web_benchmark/reports/latest';
+
+function useInput() {
+  const [value, setValue] = React.useState("");
+  const input = <input className="pb-1 bg-gray-700" value={value} onChange={e => setValue(e.target.value)} type="text" />;
+  return [value, input];
+}
 
 export default function Home() {
-  const { data, error } = useSWRImmutable<ReportScheme, string>('https://app.guzun.dev/web_benchmark/reports/latest', fetcher)
+  const { data, error } = useSWRImmutable<InputResult, string>(LATEST_REPORT_URL, fetcher)
   const [testName, setTestName] = React.useState('');
+  const [webserverName, webserverNameInput] = useInput();
+  const [language, languageInput] = useInput();
+  const [database, databaseInput] = useInput();
+  const [orm, ormInput] = useInput();
 
   if (error) return <div>Failed to load</div>
   if (!data) return <div>Loading tests...</div>
+  const parsedData = new ReportScheme(data);
 
   if (testName === '' && data.results.length > 0) {
-    setTestName(data.results[0].test_name);
+    setTestName(parsedData.results[0].testName);
   }
-  // console.log(testName);
 
-  const testNames = data.results.map((result) => result.test_name);
+  const testNames = parsedData.results.map((result) => result.testName);
   const uniqueTestNames = new Set<string>(testNames);
-
-  // console.log(uniqueTestNames);
 
   return (
     <Suspense fallback={<p>Loading tests...</p>}>
-      <main className="flex min-h-screen flex-col items-center justify-between p-24">
+      <main className="flex min-h-screen flex-col items-center">
+        webserver name:
+        {webserverNameInput} <br />
+        language:
+        {languageInput} <br />
+        database:
+        {databaseInput} <br />
+        orm:
+        {ormInput} <br />
 
-        {/* <TestNamesSet data={data} /> */}
-        <div className="flex flex-row">
-            {
-                Array.from(uniqueTestNames).map((tn: string) => (
-                    <div className='flex-auto pb-3' key={tn}>
-                        <button
-                            className="h-14 bg-gradient-to-r from-cyan-700 to-blue-700 mr-4 pr-6 pl-6 rounded hover:bg-violet-600 active:bg-violet-700 focus:ring focus:ring-black-300"
-                            onClick={() => setTestName(tn)}
-                        >{tn}</button>
-                    </div>
-                ))
-            }
-        </div>
+        <TestNamesSet uniqueTestNames={uniqueTestNames} setTestName={setTestName} />
+        {/* <Filters setWebserverName={setWebserverName} setDatabase={setDatabase} setLanguage={setLanguage} setOrm={setOrm} /> */}
 
-        <div className="relative flex place-items-center">
-          <ReportTable data={data} pickedTestName={testName} />
-        </div>
+        <ReportTable data={parsedData} testName={testName} webserverName={webserverName} database={database} language={language} orm={orm} />
+
       </main>
     </Suspense>
   )
