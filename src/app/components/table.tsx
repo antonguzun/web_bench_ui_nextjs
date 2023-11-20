@@ -1,5 +1,6 @@
 "use client";
 
+import { OrmOption } from "../entities/filter";
 import { ReportScheme } from "../entities/report";
 
 export default function ReportTable({
@@ -15,7 +16,7 @@ export default function ReportTable({
   webserverName: string;
   database: string;
   language: string;
-  orm: boolean;
+  orm: string;
 }) {
   return (
     <div className="relative flex place-items-center">
@@ -49,7 +50,14 @@ export default function ReportTable({
                 ? result.database && result.database.includes(database)
                 : true,
             )
-            // .filter((result, _) => orm === false ? orm: true)
+            .filter((result) => {
+              if (orm === OrmOption.UseOrm) {
+                return result.orm != null;
+              } else if (orm === OrmOption.WithoutOrm) {
+                return result.orm === null;
+              }
+              return true;
+            })
             .sort((a, b) => b.requestsPerSecond - a.requestsPerSecond)
             .map((result, index) => (
               <tr key={index}>

@@ -4,6 +4,7 @@ import React from "react";
 import ReportTable from "./table";
 import TestNamesSet from "./scenario_picker";
 import { ReportScheme, InputResult } from "../entities/report";
+import { OrmOption } from "../entities/filter";
 import useSWRImmutable from "swr/immutable";
 
 // @ts-ignore
@@ -24,6 +25,21 @@ function useInput() {
   return [value, input];
 }
 
+function useOrmFilter() {
+  const [value, setValue] = React.useState(OrmOption.All);
+  const input = (
+    <select
+      id="orm"
+      className="pb-1 bg-gray-700"
+      onChange={(e) => setValue(e.target.value as OrmOption)}
+    >
+      <option value={OrmOption.All}>All</option>
+      <option value={OrmOption.UseOrm}>ORM</option>
+      <option value={OrmOption.WithoutOrm}>No ORM</option>
+    </select>
+  );
+  return [value, input];
+}
 export default function ReportPage() {
   const { data, error } = useSWRImmutable<InputResult, string>(
     LATEST_REPORT_URL,
@@ -34,10 +50,11 @@ export default function ReportPage() {
   const [webserverName, webserverNameInput] = useInput();
   const [language, languageInput] = useInput();
   const [database, databaseInput] = useInput();
-  const [orm, ormInput] = useInput();
+  const [orm, ormFilter] = useOrmFilter();
 
   if (error) return <div>Failed to load</div>;
   if (!data) return <div>Loading tests...</div>;
+
   const parsedData = new ReportScheme(data);
 
   const testNames = parsedData.results.map((result) => result.testName);
@@ -55,12 +72,11 @@ export default function ReportPage() {
       database:
       {databaseInput} <br />
       orm:
-      {ormInput} <br />
+      {ormFilter} <br />
       <TestNamesSet
         uniqueTestNames={uniqueTestNames}
         setTestName={setTestName}
       />
-      {/* <Filters setWebserverName={setWebserverName} setDatabase={setDatabase} setLanguage={setLanguage} setOrm={setOrm} /> */}
       <ReportTable
         data={parsedData}
         testName={testName}
