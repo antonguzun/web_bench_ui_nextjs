@@ -11,7 +11,6 @@ export default function ScenarioSet({
     <div>
       Scenarios:
       <ul>
-
         {Array.from(uniqueTestNames).map((tn: string) => (
           <div className="pb-1" key={tn}>
             <li
@@ -20,11 +19,9 @@ export default function ScenarioSet({
             >
               <div className="pl-3">{tn}</div>
             </li>
-
           </div>
         ))}
       </ul>
-
     </div>
   );
 }
