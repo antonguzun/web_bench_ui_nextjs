@@ -55,10 +55,16 @@ export class Report {
 }
 
 function parseLatency(latency: string): number {
-  if (latency.includes("ms")) {
-    return parseFloat(latency.replace("ms", "").trim());
-  } else if (latency.includes("us")) {
-    return parseFloat(latency.replace("us", "").trim()) / 1000;
+  try {
+    if (latency.includes("ms")) {
+      return parseFloat(latency.replace("ms", "").trim());
+    } else if (latency.includes("us")) {
+      return parseFloat(latency.replace("us", "").trim()) / 1000;
+    } else {
+      return parseFloat(latency.trim());
+    }
+  } catch (error) {
+    console.error("Error parsing latency:", error);
+    return -1;
   }
-  return -1;
 }
