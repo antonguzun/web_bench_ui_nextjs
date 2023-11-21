@@ -6,7 +6,7 @@ import ScenarioSet from "./scenario_picker";
 import { ReportScheme, InputResult } from "../entities/report";
 import useSWRImmutable from "swr/immutable";
 import ReportFilters from "./filter";
-import filterReports from "../utils/filter";
+import filterReports from "../services/filter";
 import ReportChart from "./chart";
 
 // @ts-ignore
