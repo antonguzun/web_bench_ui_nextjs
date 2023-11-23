@@ -1,10 +1,10 @@
-import React from "react";
-import { FiltersState, OrmOption } from "../entities/filter";
+import React from 'react'
+import {FiltersState, OrmOption} from '../entities/filter'
 
-const inputStyle = "rounded-md pb-1 bg-slate-700";
+const inputStyle = 'rounded-md pb-1 bg-slate-700'
 
 function useInput() {
-  const [value, setValue] = React.useState("");
+  const [value, setValue] = React.useState('')
   const input = (
     <input
       className={inputStyle}
@@ -12,12 +12,12 @@ function useInput() {
       onChange={(e) => setValue(e.target.value)}
       type="text"
     />
-  );
-  return { value, input };
+  )
+  return {value, input}
 }
 
 function useOrmFilter() {
-  const [value, setValue] = React.useState(OrmOption.All);
+  const [value, setValue] = React.useState(OrmOption.All)
   const input = (
     <select
       id="orm"
@@ -34,17 +34,17 @@ function useOrmFilter() {
         No ORM
       </option>
     </select>
-  );
-  return { value, input };
+  )
+  return {value, input}
 }
 
 export default function ReportFilters() {
-  const { value: webserverName, input: webserverNameInput } = useInput();
-  const { value: language, input: languageInput } = useInput();
-  const { value: database, input: databaseInput } = useInput();
-  const { value: orm, input: ormFilter } = useOrmFilter();
+  const {value: webserverName, input: webserverNameInput} = useInput()
+  const {value: language, input: languageInput} = useInput()
+  const {value: database, input: databaseInput} = useInput()
+  const {value: orm, input: ormFilter} = useOrmFilter()
 
-  const filterState = new FiltersState(webserverName, language, database, orm);
+  const filterState = new FiltersState(webserverName, language, database, orm)
   const filterElement = (
     <>
       <li>
@@ -72,6 +72,6 @@ export default function ReportFilters() {
         </label>
       </li>
     </>
-  );
-  return { filterState, filterElement };
+  )
+  return {filterState, filterElement}
 }

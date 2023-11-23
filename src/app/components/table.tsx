@@ -1,8 +1,8 @@
-"use client";
+'use client'
 
-import { Report } from "../entities/report";
+import {Report} from '../entities/report'
 
-export default function ReportTable({ data }: { data: Report[] }) {
+export default function ReportTable({data}: {data: Report[]}) {
   return (
     <table className="md:table-auto border-collapse">
       <thead>
@@ -23,8 +23,8 @@ export default function ReportTable({ data }: { data: Report[] }) {
           <tr key={index}>
             <td className="text-center">{result.webserverName}</td>
             <td className="text-center">{result.language}</td>
-            <td className="text-center">{result.database || "-"}</td>
-            <td className="text-center">{result.orm || "-"}</td>
+            <td className="text-center">{result.database || '-'}</td>
+            <td className="text-center">{result.orm || '-'}</td>
             <td className="tabular-nums text-right">
               {result.requestsPerSecond.toFixed(0)}
             </td>
@@ -44,5 +44,5 @@ export default function ReportTable({ data }: { data: Report[] }) {
         ))}
       </tbody>
     </table>
-  );
+  )
 }
