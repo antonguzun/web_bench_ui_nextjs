@@ -1,11 +1,11 @@
-"use client";
+'use client'
 
 export default function ScenarioSet({
   uniqueTestNames,
   setTestName,
 }: {
-  uniqueTestNames: Set<string>;
-  setTestName: React.Dispatch<React.SetStateAction<string>>;
+  uniqueTestNames: Set<string>
+  setTestName: React.Dispatch<React.SetStateAction<string>>
 }) {
   return (
     <div>
@@ -23,5 +23,5 @@ export default function ScenarioSet({
         ))}
       </ul>
     </div>
-  );
+  )
 }

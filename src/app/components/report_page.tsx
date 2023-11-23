@@ -1,42 +1,42 @@
-"use client";
+'use client'
 
-import React from "react";
-import ReportTable from "./table";
-import ScenarioSet from "./scenario_picker";
-import { ReportScheme, InputResult } from "../entities/report";
-import useSWRImmutable from "swr/immutable";
-import ReportFilters from "./filter";
-import filterReports from "../services/filter";
-import ReportChart from "./chart";
+import React from 'react'
+import ReportTable from './table'
+import ScenarioSet from './scenario_picker'
+import {ReportScheme, InputResult} from '../entities/report'
+import useSWRImmutable from 'swr/immutable'
+import ReportFilters from './filter'
+import filterReports from '../services/filter'
+import ReportChart from './chart'
 
 // @ts-ignore
-const fetcher = (...args) => fetch(...args).then((res) => res.json());
+const fetcher = (...args) => fetch(...args).then((res) => res.json())
 
-const LATEST_REPORT_URL = "https://app.guzun.dev/web_benchmark/reports/latest";
+const LATEST_REPORT_URL = 'https://app.guzun.dev/web_benchmark/reports/latest'
 
 export default function ReportPage() {
-  const { data, error } = useSWRImmutable<InputResult, string>(
+  const {data, error} = useSWRImmutable<InputResult, string>(
     LATEST_REPORT_URL,
     fetcher,
-  );
+  )
 
-  const [testName, setTestName] = React.useState("");
-  const { filterState, filterElement } = ReportFilters();
+  const [testName, setTestName] = React.useState('')
+  const {filterState, filterElement} = ReportFilters()
 
-  if (error) return <div>Failed to load</div>;
-  if (!data) return <div>Loading tests...</div>;
+  if (error) return <div>Failed to load</div>
+  if (!data) return <div>Loading tests...</div>
 
-  const parsedData = new ReportScheme(data);
+  const parsedData = new ReportScheme(data)
 
-  const testNames = parsedData.results.map((result) => result.testName);
-  const uniqueTestNames = new Set<string>(testNames);
-  if (testName === "" && parsedData.results.length > 0) {
-    setTestName(parsedData.results[0].testName);
+  const testNames = parsedData.results.map((result) => result.testName)
+  const uniqueTestNames = new Set<string>(testNames)
+  if (testName === '' && parsedData.results.length > 0) {
+    setTestName(parsedData.results[0].testName)
   } else {
-    console.error("parsedData.results is empty or undefined");
+    console.error('parsedData.results is empty or undefined')
   }
 
-  const filteredReports = filterReports(parsedData, filterState, testName);
+  const filteredReports = filterReports(parsedData, filterState, testName)
 
   return (
     <>
@@ -64,5 +64,5 @@ export default function ReportPage() {
         </div>
       </div>
     </>
-  );
+  )
 }

@@ -1,5 +1,5 @@
-import { ReportScheme } from "../entities/report";
-import { FiltersState, OrmOption } from "../entities/filter";
+import {ReportScheme} from '../entities/report'
+import {FiltersState, OrmOption} from '../entities/filter'
 
 export default function filterReports(
   parsedData: ReportScheme,
@@ -9,27 +9,27 @@ export default function filterReports(
   return parsedData.results
     .filter((result, _) => result.testName === testName)
     .filter((result, _) =>
-      filterState.webserverName !== ""
+      filterState.webserverName !== ''
         ? result.webserverName.includes(filterState.webserverName)
         : true,
     )
     .filter((result, _) =>
-      filterState.language !== ""
+      filterState.language !== ''
         ? result.language.includes(filterState.language)
         : true,
     )
     .filter((result, _) =>
-      filterState.database !== ""
+      filterState.database !== ''
         ? result.database && result.database.includes(filterState.database)
         : true,
     )
     .filter((result) => {
       if (filterState.orm === OrmOption.UseOrm) {
-        return result.orm != null;
+        return result.orm != null
       } else if (filterState.orm === OrmOption.WithoutOrm) {
-        return result.orm === null;
+        return result.orm === null
       }
-      return true;
+      return true
     })
-    .sort((a, b) => b.requestsPerSecond - a.requestsPerSecond);
+    .sort((a, b) => b.requestsPerSecond - a.requestsPerSecond)
 }
