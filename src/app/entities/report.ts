@@ -23,13 +23,16 @@ export class ReportScheme {
 
   constructor(data: InputResult) {
     this.created_at = data.created_at
+    let cnt = 1
     this.results = data.results.map((report) => {
-      return new Report(report)
+      cnt += 1
+      return new Report(report, cnt)
     })
   }
 }
 
 export class Report {
+  id: number
   testName: string
   webserverName: string
   language: string
@@ -42,7 +45,8 @@ export class Report {
   latencyP99__ms: number
   source: string
 
-  constructor(rawReport: InputReport) {
+  constructor(rawReport: InputReport, id: number) {
+    this.id = id
     this.testName = rawReport.test_name
     this.webserverName = rawReport.webserver_name
     this.language = rawReport.language
@@ -70,4 +74,14 @@ function parseLatency(latency: string): number {
     console.error('Error parsing latency:', error)
     return -1
   }
+}
+
+
+export type ReportOptions = ReportOption[]
+
+export interface ReportOption {
+  name: string
+  type: string
+  mtime: string
+  size: number
 }
