@@ -42,23 +42,24 @@ export default function ReportPage() {
     <>
       <h1 className="py-8 text-2xl text-center">Webservers bench</h1>
 
-      <div className="max-w-8xl mx-auto px-4 sm:px-6 md:px-8">
-        <div className="grid grid-rows-2 grid-flow-col gap-4 pl-8">
-          <ul className="row-span-3 auto-cols-min max-w-xs px-4 py-2 bg-slate-800 rounded-lg ">
+      <div className="mx-auto px-4 sm:px-6 md:px-8 inline-block justify-center">
+        <div className="grid grid-rows-2 grid-flow-col gap-4 pl-8 min-h-min">
+          <ul className="row-span-3 min-w-min px-4 py-2 bg-slate-800 rounded-lg max-h-96">
             <li>
               <ScenarioSet
                 uniqueTestNames={uniqueTestNames}
                 setTestName={setTestName}
+                testName={testName}
               />
             </li>
             {filterElement}
           </ul>
 
-          <div className="col-span-2 px-4 py-8 sm:px-8 bg-slate-800 rounded-lg">
+          <div className="col-span-2 px-4 py-8 sm:px-8 bg-slate-800 rounded-lg inline-block overflow-auto">
             <ReportTable data={filteredReports} />
           </div>
 
-          <div className="row-span-2 col-span-2 px-4 py-8 sm:px-8 bg-slate-800 rounded-lg">
+          <div className="row-span-2 col-span-2 px-4 py-8 sm:px-8 bg-slate-800 rounded-lg inline-block max-h-96">
             <ReportChart data={filteredReports} />
           </div>
         </div>

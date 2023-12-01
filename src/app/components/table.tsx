@@ -16,6 +16,7 @@ export default function ReportTable({data}: {data: Report[]}) {
           <th className="p-1">Latency p75</th>
           <th className="p-1">Latency p90</th>
           <th className="p-1">Latency p99</th>
+          <th className="px-1">Source</th>
         </tr>
       </thead>
       <tbody>
@@ -39,6 +40,16 @@ export default function ReportTable({data}: {data: Report[]}) {
             </td>
             <td className="tabular-nums text-right">
               {result.latencyP99__ms.toFixed(2)}
+            </td>
+            <td className="text-center">
+              <a
+                className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                href={result.source}
+                target="_blank"
+                rel="noreferrer"
+              >
+                Link
+              </a>
             </td>
           </tr>
         ))}
