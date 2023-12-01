@@ -1,8 +1,15 @@
 'use client'
 
-import {Report} from '../entities/report'
+import { Report } from '../entities/report'
 
-export default function ReportTable({data}: {data: Report[]}) {
+export default function ReportTable(
+  { data, hoverRow, setHoverRow }:
+    {
+      data: Report[],
+      hoverRow: number,
+      setHoverRow: React.Dispatch<React.SetStateAction<number>>
+    }
+) {
   return (
     <table className="md:table-auto border-collapse">
       <thead>
@@ -21,7 +28,11 @@ export default function ReportTable({data}: {data: Report[]}) {
       </thead>
       <tbody>
         {data.map((result, index) => (
-          <tr key={index}>
+          <tr key={index}
+            className={result.id === hoverRow ? "bg-slate-600" : ""}
+            onMouseEnter={() => setHoverRow(result.id)}
+            onMouseLeave={() => setHoverRow(-1)}
+          >
             <td className="text-center">{result.webserverName}</td>
             <td className="text-center">{result.language}</td>
             <td className="text-center">{result.database || '-'}</td>
