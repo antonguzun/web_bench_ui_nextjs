@@ -14,6 +14,7 @@ interface InputReport {
   latency_p75: string
   latency_p90: string
   latency_p99: string
+  source: string
 }
 
 export class ReportScheme {
@@ -39,6 +40,7 @@ export class Report {
   latencyP75__ms: number
   latencyP90__ms: number
   latencyP99__ms: number
+  source: string
 
   constructor(rawReport: InputReport) {
     this.testName = rawReport.test_name
@@ -51,6 +53,7 @@ export class Report {
     this.latencyP75__ms = parseLatency(rawReport.latency_p75)
     this.latencyP90__ms = parseLatency(rawReport.latency_p90)
     this.latencyP99__ms = parseLatency(rawReport.latency_p99)
+    this.source = rawReport.source
   }
 }
 
