@@ -76,7 +76,6 @@ function parseLatency(latency: string): number {
   }
 }
 
-
 export type ReportOptions = ReportOption[]
 
 export interface ReportOption {
