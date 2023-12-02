@@ -7,18 +7,18 @@ export default function filterReports(
   testName: string,
 ) {
   return parsedData.results
-    .filter((result, _) => result.testName === testName)
-    .filter((result, _) =>
+    .filter((result) => result.testName === testName)
+    .filter((result) =>
       filterState.webserverName !== ''
         ? result.webserverName.includes(filterState.webserverName)
         : true,
     )
-    .filter((result, _) =>
+    .filter((result) =>
       filterState.language !== ''
         ? result.language.includes(filterState.language)
         : true,
     )
-    .filter((result, _) =>
+    .filter((result) =>
       filterState.database !== ''
         ? result.database && result.database.includes(filterState.database)
         : true,

@@ -9,7 +9,7 @@ import ReportFilters from './filter'
 import filterReports from '../services/filter'
 import ReportChart from './chart'
 
-// @ts-ignore
+// @ts-expect-error - satisfy linter
 const fetcher = (...args) => fetch(...args).then((res) => res.json())
 
 const REPORTS_LISTING_URL = 'https://app.guzun.dev/web_benchmark/reports/'
@@ -20,10 +20,10 @@ export default function ReportPage() {
     REPORTS_LISTING_URL + reportFileName,
     fetcher,
   )
-  const {data: reportsOptions, error: reportsError} = useSWRImmutable<
-    ReportOptions,
-    string
-  >(REPORTS_LISTING_URL, fetcher)
+  const {data: reportsOptions} = useSWRImmutable<ReportOptions, string>(
+    REPORTS_LISTING_URL,
+    fetcher,
+  )
   const [testName, setTestName] = React.useState('')
   const [hoverRow, setHoverRow] = React.useState(-1)
   const {filterState, filterElement} = ReportFilters()
@@ -63,7 +63,7 @@ export default function ReportPage() {
             <ul className="row-span-5 min-w-min px-4 py-2 my-3 bg-slate-800 rounded-lg max-h-min">
               Previous reports:
               {reportsOptions?.reverse().map((reportOption) => (
-                <li className="ml-1">
+                <li className="ml-1" key={reportOption.name}>
                   <a
                     key={reportOption.name}
                     className={

@@ -40,7 +40,7 @@ export default function ReportChart({
           />
           <YAxis height={70} tick={{fill: 'white'}} />
           <Bar isAnimationActive={false} dataKey="requestsPerSecond">
-            {data.map((entry, _) => (
+            {data.map((entry) => (
               <Cell
                 key={`cell-${entry.id}`}
                 fill={entry.id === hoverRow ? '#94a3b8' : '#455569'}
