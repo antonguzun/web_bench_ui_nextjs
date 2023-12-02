@@ -1,0 +1,48 @@
+name: ClientTemplatePipeline
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  lintTest:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone Repository
+        uses: actions/checkout@v2
+      - name: Install Dependecies
+        run: |
+          echo "Installing Dependencies..."
+          npm install
+      - name: Run Linting
+        run: |
+          echo "Linting..."
+          npm run lint
+        env:
+          CI: true
+
+  deploy:
+    name: Build
+    runs-on: ubuntu-latest
+    needs: [lintTest]
+    steps:
+      - name: Clone Repository
+        uses: actions/checkout@v2
+      - name: Install Dependecies
+        run: |
+          echo "Installing Dependencies..."
+          npm install
+      - name: Run build
+        run: |
+          echo "Building..."
+          npm run build
+      - name: rsync upload dist on server
+        uses: burnett01/rsync-deployments@6.0.0
+        with:
+          switches: -vzr --delete
+          path: dist/
+          remote_path: /home/www-data/web_bench_ui_next/dist
+          remote_host: ${{ secrets.HOST }}
+          remote_user: ${{ secrets.USERNAME }}
+          remote_key: ${{ secrets.DEPLOY_KEY }}
