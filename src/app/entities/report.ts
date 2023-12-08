@@ -76,11 +76,33 @@ function parseLatency(latency: string): number {
   }
 }
 
-export type ReportOptions = ReportOption[]
-
-export interface ReportOption {
+export interface ReportOptionInterface {
+  // name: 2023-05-12.json or latest
   name: string
   type: string
+  // mtime: Fri, 23 Jun 2023
   mtime: string
   size: number
+}
+
+export class ReportOption {
+  name: string
+  type: string
+  mtime: Date
+  size: number
+  is_latest: boolean
+
+  constructor(ro: ReportOptionInterface) {
+    this.name = ro.name
+    this.type = ro.type
+
+    if (ro.name === 'latest') {
+      this.mtime = new Date(ro.mtime)
+    } else {
+      this.mtime = new Date(ro.name.split('.')[0])
+    }
+
+    this.size = ro.size
+    this.is_latest = ro.name === 'latest'
+  }
 }

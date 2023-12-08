@@ -3,7 +3,7 @@
 import React from 'react'
 import ReportTable from './table'
 import ScenarioSet from './scenario_picker'
-import {ReportScheme, InputResult, ReportOptions} from '../entities/report'
+import {ReportScheme, InputResult, ReportOptionInterface, ReportOption} from '../entities/report'
 import useSWRImmutable from 'swr/immutable'
 import ReportFilters from './filter'
 import filterReports from '../services/filter'
@@ -12,7 +12,7 @@ import ReportChart from './chart'
 // @ts-expect-error - satisfy linter
 const fetcher = (...args) => fetch(...args).then((res) => res.json())
 
-const REPORTS_LISTING_URL = 'https://app.guzun.dev/web_benchmark/reports/'
+const REPORTS_LISTING_URL = 'https://web-bench.guzun.dev/reports/'
 
 export default function ReportPage() {
   const [reportFileName, setReportFileName] = React.useState('latest')
@@ -20,10 +20,27 @@ export default function ReportPage() {
     REPORTS_LISTING_URL + reportFileName,
     fetcher,
   )
-  const {data: reportsOptions} = useSWRImmutable<ReportOptions, string>(
+  const {data: reportsOptionsRaw} = useSWRImmutable<ReportOptionInterface[], string>(
     REPORTS_LISTING_URL,
     fetcher,
   )
+  let reportsOptions: ReportOption[];
+  if (reportsOptionsRaw === undefined) {
+    reportsOptions = []
+  } else {
+    reportsOptions = reportsOptionsRaw.map((ro) => {
+      return new ReportOption(ro)
+    })
+    reportsOptions.sort((a, b) => {
+      if (a.mtime < b.mtime) {
+        return 1
+      } else if (a.mtime > b.mtime) {
+        return -1
+      } else {
+        return 0
+      }
+    })
+  }
   const [testName, setTestName] = React.useState('')
   const [hoverRow, setHoverRow] = React.useState(-1)
   const {filterState, filterElement} = ReportFilters()
@@ -62,8 +79,8 @@ export default function ReportPage() {
 
             <ul className="row-span-5 min-w-min px-4 py-2 my-3 bg-slate-800 rounded-lg max-h-min">
               Previous reports:
-              {reportsOptions?.reverse().map((reportOption) => (
-                <li className="ml-1" key={reportOption.name}>
+              {reportsOptions?.map((reportOption) => (
+                <li className="ml-1 font-mono" key={reportOption.name}>
                   <a
                     key={reportOption.name}
                     className={
@@ -75,9 +92,9 @@ export default function ReportPage() {
                     target="_blank"
                     rel="noreferrer"
                   >
-                    {reportOption.name === 'latest'
-                      ? reportOption.mtime.slice(0, 16) + ' (latest)'
-                      : reportOption.mtime.slice(0, 16)}
+                    {reportOption.is_latest
+                      ? reportOption.mtime.toDateString() + ' (latest)'
+                      : reportOption.mtime.toDateString()}
                   </a>
                 </li>
               ))}
