@@ -31,6 +31,41 @@ export class ReportScheme {
   }
 }
 
+class BenchOptions {
+  run_server_command: string
+  build_server_command: string
+  wrk_command: string
+
+  constructor(options: any) {
+    this.run_server_command = options.concurrency
+    this.build_server_command = options.duration
+    this.wrk_command = options.pipeline
+  }
+}
+
+class Point {
+  time: number
+  cpu_usage: number
+  memory_usage: number
+
+  constructor(point: any) {
+    this.time = point.t
+    this.cpu_usage = point.cu
+    this.memory_usage = point.mu
+  }
+}
+class MonitoringResult {
+  mean_cpu_usage: number
+  mean_memory_usage: number
+  points: Point[]
+
+  constructor(data: any) {
+    this.mean_cpu_usage = data.mean_cpu_usage
+    this.mean_memory_usage = data.mean_memory_usage
+    this.points = data.points.map((point: any) => new Point(point))
+  }
+}
+
 export class Report {
   id: number
   testName: string
@@ -44,6 +79,9 @@ export class Report {
   latencyP90__ms: number
   latencyP99__ms: number
   source: string
+  monitoring_result: MonitoringResult
+  bench_options: BenchOptions
+  color: string
 
   constructor(rawReport: InputReport, id: number) {
     this.id = id
@@ -58,8 +96,31 @@ export class Report {
     this.latencyP90__ms = parseLatency(rawReport.latency_p90)
     this.latencyP99__ms = parseLatency(rawReport.latency_p99)
     this.source = rawReport.source
+    this.monitoring_result = new MonitoringResult(rawReport.monitoring_result)
+    this.bench_options = new BenchOptions(rawReport.bench_options)
+    this.color = langToColor(this.language)
   }
 }
+
+function langToColor(lang: string) {
+  switch (lang) {
+    case 'rust':
+      return '#dea584'
+    case 'go':
+      return '#6ad1e3'
+    case 'python':
+      return '#3572A5'
+    // case 'Node.js':
+    //   return '#e36a6a'
+    // case 'Ruby':
+    //   return '#e36a6a'
+    // case 'PHP':
+    //   return '#e36a6a'
+    default:
+      return '#94a3b8'
+  }
+}
+
 
 function parseLatency(latency: string): number {
   try {
