@@ -4,7 +4,7 @@ export interface InputResult {
 }
 
 interface InputReport {
-  monitoring_result: any
+  monitoring_result: any  // @typescript-eslint/no-explicit-any
   bench_options: any
   test_name: string
   webserver_name: string

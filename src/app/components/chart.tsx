@@ -37,19 +37,15 @@ export function HorReportChart({
             height={100}
             data={data}
             barGap={105}
-            // barCategoryGap={200}
             layout="vertical"
           >
             <CartesianGrid
               strokeDasharray="4 4"
-              // fill="black"
               horizontal={false}
-              // fillOpacity={0.1}
             />
             <YAxis
               type="category"
               dataKey="webserverName"
-              // angle={-30}
               width={75}
               textAnchor="end"
               tick={{fill: 'white'}}
@@ -171,9 +167,10 @@ function ResourceConsumptionChart({
 
   console.log('dataKey', dataKey)
   const lines = data
-    .filter((res, _) => (hoverRow === -1 ? true : res.id == hoverRow))
-    .map((result, _) => (
+    .filter((res) => (hoverRow === -1 ? true : res.id == hoverRow))
+    .map((result) => (
       <Line
+        key={result.id}
         id={result.id.toString()}
         dot={false}
         data={result.monitoring_result.points}
