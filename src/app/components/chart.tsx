@@ -39,10 +39,7 @@ export function HorReportChart({
             barGap={105}
             layout="vertical"
           >
-            <CartesianGrid
-              strokeDasharray="4 4"
-              horizontal={false}
-            />
+            <CartesianGrid strokeDasharray="4 4" horizontal={false} />
             <YAxis
               type="category"
               dataKey="webserverName"
