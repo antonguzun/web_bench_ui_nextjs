@@ -97,20 +97,16 @@ export function RenderMemChart({
     ),
   )
 
-  const res = useMemo(
-    () => (
-      <ResourceConsumptionChart
-        data={data}
-        hoverRow={hoverRow}
-        setHoverRow={setHoverRow}
-        dataKey="memory_usage"
-        header="Memory consumption, MB"
-        YMax={max_v}
-      />
-    ),
-    [data, hoverRow],
+  return (
+    <ResourceConsumptionChart
+      data={data}
+      hoverRow={hoverRow}
+      setHoverRow={setHoverRow}
+      dataKey="memory_usage"
+      header="Memory consumption, MB"
+      YMax={max_v}
+    />
   )
-  return res
 }
 
 export function RenderCpuChart({
@@ -135,20 +131,16 @@ export function RenderCpuChart({
     ),
   )
 
-  const res = useMemo(
-    () => (
-      <ResourceConsumptionChart
-        data={data}
-        hoverRow={hoverRow}
-        setHoverRow={setHoverRow}
-        dataKey="cpu_usage"
-        header="CPU consumption, %"
-        YMax={max_v}
-      />
-    ),
-    [data, hoverRow],
+  return (
+    <ResourceConsumptionChart
+      data={data}
+      hoverRow={hoverRow}
+      setHoverRow={setHoverRow}
+      dataKey="cpu_usage"
+      header="CPU consumption, %"
+      YMax={max_v}
+    />
   )
-  return res
 }
 
 function ResourceConsumptionChart({
