@@ -86,6 +86,10 @@ export function RenderMemChart({
   hoverRow: number
   setHoverRow: React.Dispatch<React.SetStateAction<number>>
 }) {
+  if (data.length === 0) {
+    return <div>No data</div>
+  }
+
   const len_of_points = data[0].monitoring_result.points.length
   const max_v = Math.max(
     ...data.map((res) =>
@@ -118,6 +122,10 @@ export function RenderCpuChart({
   hoverRow: number
   setHoverRow: React.Dispatch<React.SetStateAction<number>>
 }) {
+  if (data.length === 0) {
+    return <div>No data</div>
+  }
+
   const len_of_points = data[0].monitoring_result.points.length
   const max_v = Math.max(
     ...data.map((res) =>
