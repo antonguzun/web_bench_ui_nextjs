@@ -183,8 +183,8 @@ function ResourceConsumptionChart({
         stroke={result.color}
         // hide={hoverRow !== -1 && hoverRow !== result.id}
         strokeWidth={hoverRow === result.id ? 3 : 0.5}
-        onMouseEnter={() => setHoverRow(result.id)}
-        onMouseLeave={() => setHoverRow(-1)}
+        // onMouseEnter={() => setHoverRow(result.id)}
+        // onMouseLeave={() => setHoverRow(-1)}
         isAnimationActive={false}
       />
     ))
