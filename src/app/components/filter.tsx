@@ -44,7 +44,10 @@ export default function ReportFilters() {
   const {value: database, input: databaseInput} = useInput()
   const {value: orm, input: ormFilter} = useOrmFilter()
 
-  const filterState = new FiltersState(webserverName, language, database, orm)
+  const filterState = React.useMemo(
+    () => new FiltersState(webserverName, language, database, orm),
+    [webserverName, language, database, orm],
+  )
   const filterElement = (
     <>
       <li>

@@ -40,7 +40,9 @@ export default function ReportTable({
             onMouseLeave={() => setHoverRow(-1)}
           >
             <td className="text-center">{result.webserverName}</td>
-            <td className="text-center" color={result.color}>{result.language}</td>
+            <td className="text-center" color={result.color}>
+              {result.language}
+            </td>
             <td className="text-center">{result.database || '-'}</td>
             <td className="text-center">{result.orm || '-'}</td>
             <td className="tabular-nums text-right m-2">

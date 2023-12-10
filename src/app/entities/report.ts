@@ -4,6 +4,8 @@ export interface InputResult {
 }
 
 interface InputReport {
+  monitoring_result: any
+  bench_options: any
   test_name: string
   webserver_name: string
   language: string
@@ -96,6 +98,7 @@ export class Report {
     this.latencyP90__ms = parseLatency(rawReport.latency_p90)
     this.latencyP99__ms = parseLatency(rawReport.latency_p99)
     this.source = rawReport.source
+    console.log('constructor')
     this.monitoring_result = new MonitoringResult(rawReport.monitoring_result)
     this.bench_options = new BenchOptions(rawReport.bench_options)
     this.color = langToColor(this.language)
@@ -120,7 +123,6 @@ function langToColor(lang: string) {
       return '#94a3b8'
   }
 }
-
 
 function parseLatency(latency: string): number {
   try {

@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useMemo } from 'react'
+import React, {useMemo} from 'react'
 import ReportTable from './table'
 import ScenarioSet from './scenario_picker'
 import {
@@ -34,6 +34,27 @@ export default function ReportPage() {
     ReportOptionInterface[],
     string
   >(REPORTS_LISTING_URL, fetcher)
+
+  const parsedData = useMemo(() => (data ? parseData(data) : null), [data])
+  const [testName, setTestName] = React.useState('')
+  const {filterState, filterElement} = ReportFilters()
+
+  const filteredReports = useMemo(
+    () => (parsedData ? filterReports(parsedData, filterState, testName) : []),
+    [parsedData, filterState, testName],
+  )
+  const testNames = useMemo(() => {
+    console.log('testNames triggered by parsedData')
+    return parsedData
+      ? parsedData.results.map((result) => result.testName).sort()
+      : []
+  }, [parsedData])
+  const uniqueTestNames = useMemo(
+    () => (testNames ? new Set<string>(testNames) : new Set<string>([])),
+    [testNames],
+  )
+  const [hoverRow, setHoverRow] = React.useState(-1)
+
   let reportsOptions: ReportOption[]
   if (reportsOptionsRaw === undefined) {
     reportsOptions = []
@@ -51,29 +72,14 @@ export default function ReportPage() {
       }
     })
   }
-  // if (!data) return <div>Loading tests...</div>
-
-  // const parsedData = useMemo(
-  //   () => parseData(data),
-  //   [data]
-  // );
-
-  const [testName, setTestName] = React.useState('')
-  const [hoverRow, setHoverRow] = React.useState(-1)
-  const {filterState, filterElement} = ReportFilters()
 
   if (error) return <div>Failed to load</div>
-  if (!data) return <div>Loading tests...</div>
-  const parsedData = new ReportScheme(data)
+
   if (!parsedData) return <div>Loading tests...</div>
 
-  const testNames = parsedData.results.map((result) => result.testName).sort()
-  const uniqueTestNames = new Set<string>(testNames)
   if (testName === '' && parsedData.results.length > 0) {
     setTestName(parsedData.results[0].testName)
   }
-
-  const filteredReports = filterReports(parsedData, filterState, testName)
 
   return (
     <>

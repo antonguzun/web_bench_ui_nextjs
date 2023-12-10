@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, {useMemo} from 'react'
 import {
   BarChart,
   Bar,
@@ -80,6 +80,10 @@ export function HorReportChart({
   )
 }
 
+function roundYMax(value: number) {
+  return Math.ceil(value * 1.1)
+}
+
 export function RenderMemChart({
   data,
   hoverRow,
@@ -89,15 +93,27 @@ export function RenderMemChart({
   hoverRow: number
   setHoverRow: React.Dispatch<React.SetStateAction<number>>
 }) {
-  return (
-    <ResourceConsumptionChart
-      data={data}
-      hoverRow={hoverRow}
-      setHoverRow={setHoverRow}
-      dataKey="memory_usage"
-      header="Memory consumption, MB"
-    />
+  const len_of_points = data[0].monitoring_result.points.length
+  const max_v = Math.max(
+    ...data.map((res) =>
+      roundYMax(res.monitoring_result.points[len_of_points % 2].memory_usage),
+    ),
   )
+
+  const res = useMemo(
+    () => (
+      <ResourceConsumptionChart
+        data={data}
+        hoverRow={hoverRow}
+        setHoverRow={setHoverRow}
+        dataKey="memory_usage"
+        header="Memory consumption, MB"
+        YMax={max_v}
+      />
+    ),
+    [data, hoverRow],
+  )
+  return res
 }
 
 export function RenderCpuChart({
@@ -109,15 +125,29 @@ export function RenderCpuChart({
   hoverRow: number
   setHoverRow: React.Dispatch<React.SetStateAction<number>>
 }) {
-  return (
-    <ResourceConsumptionChart
-      data={data}
-      hoverRow={hoverRow}
-      setHoverRow={setHoverRow}
-      dataKey="cpu_usage"
-      header="CPU consumption, %"
-    />
+  const len_of_points = data[0].monitoring_result.points.length
+  const max_v = Math.max(
+    ...data.map((res) =>
+      roundYMax(
+        res.monitoring_result.points[len_of_points % 2].cpu_usage * 1.1,
+      ),
+    ),
   )
+
+  const res = useMemo(
+    () => (
+      <ResourceConsumptionChart
+        data={data}
+        hoverRow={hoverRow}
+        setHoverRow={setHoverRow}
+        dataKey="cpu_usage"
+        header="CPU consumption, %"
+        YMax={max_v}
+      />
+    ),
+    [data, hoverRow],
+  )
+  return res
 }
 
 function ResourceConsumptionChart({
@@ -126,59 +156,43 @@ function ResourceConsumptionChart({
   setHoverRow,
   dataKey,
   header,
+  YMax,
 }: {
   data: Report[]
   hoverRow: number
   setHoverRow: React.Dispatch<React.SetStateAction<number>>
   dataKey: string
   header: string
+  YMax: number
 }) {
   if (data.length === 0) {
     return <div>No data</div>
   }
 
-  const lines = data.map((result, _) => (
-    <Line
-      id={result.id.toString()}
-      dot={false}
-      data={result.monitoring_result.points}
-      dataKey={dataKey}
-      stroke={result.color}
-      strokeWidth={1}
-      onMouseEnter={() => setHoverRow(result.id)}
-      onMouseLeave={() => setHoverRow(-1)}
-      isAnimationActive={false}
-    />
-  ))
-
-  const hoveredReport = data.find((result) => result.id === hoverRow)
-  // const hoveredReport = null
-  let hoveredLine = <></>
-  if (!hoveredReport) {
-    ;<></>
-  } else {
-    hoveredLine = (
+  console.log('dataKey', dataKey)
+  const lines = data
+    .filter((res, _) => (hoverRow === -1 ? true : res.id == hoverRow))
+    .map((result, _) => (
       <Line
-        id={hoveredReport.id.toString()}
+        id={result.id.toString()}
         dot={false}
-        data={hoveredReport.monitoring_result.points}
+        data={result.monitoring_result.points}
         dataKey={dataKey}
-        stroke={hoveredReport.color}
-        strokeWidth={3}
-        onMouseEnter={() => setHoverRow(hoveredReport.id)}
+        stroke={result.color}
+        // hide={hoverRow !== -1 && hoverRow !== result.id}
+        strokeWidth={hoverRow === result.id ? 3 : 0.5}
+        onMouseEnter={() => setHoverRow(result.id)}
         onMouseLeave={() => setHoverRow(-1)}
         isAnimationActive={false}
       />
-    )
-  }
+    ))
+
   return (
     <>
       <div className="max-w-min">
         <h3 className="text-center">{header}</h3>
-        {/* <ResponsiveContainer width='99%' height={300}> */}
         <LineChart width={900} height={300}>
           {lines}
-          {hoveredLine}
           <XAxis
             label={{
               value: 'Time, s',
@@ -192,16 +206,10 @@ function ResourceConsumptionChart({
             tick={{fill: 'white'}}
           />
 
-          <CartesianGrid
-            strokeDasharray="4 4"
-            // fill="black"
-            vertical={false}
-            // fillOpacity={0.1}
-          />
+          <CartesianGrid strokeDasharray="4 4" vertical={false} />
 
-          <YAxis tick={{fill: 'white'}} />
+          <YAxis tick={{fill: 'white'}} domain={[0, YMax]} />
         </LineChart>
-        {/* </ResponsiveContainer> */}
       </div>
     </>
   )
